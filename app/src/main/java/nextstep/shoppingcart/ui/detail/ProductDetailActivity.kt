@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import nextstep.shoppingcart.base.BaseComponentActivity
 import nextstep.shoppingcart.data.mockProducts
 import nextstep.shoppingcart.model.Product
-import nextstep.shoppingcart.util.CartUtil
+import nextstep.shoppingcart.util.CartRepositoryImpl
 
 class ProductDetailActivity : BaseComponentActivity() {
 
@@ -20,7 +20,7 @@ class ProductDetailActivity : BaseComponentActivity() {
             ProductDetailScreen(
                 item = getProduct,
                 onBack = { onBackPressedDispatcher.onBackPressed() },
-                onCart = { item -> CartUtil.addOne(item) }
+                onCart = { item -> CartRepositoryImpl.getInstance().addOne(item) }
             )
         }
 

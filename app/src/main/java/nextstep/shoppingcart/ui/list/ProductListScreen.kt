@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -28,7 +29,8 @@ import nextstep.shoppingcart.designsystem.theme.TopBarTextColor
 import nextstep.shoppingcart.model.Product
 import nextstep.shoppingcart.navigation.RouteType
 import nextstep.shoppingcart.ui.list.component.ProductItem
-import nextstep.shoppingcart.util.CartUtil
+import nextstep.shoppingcart.util.CartRepository
+import nextstep.shoppingcart.util.CartRepositoryImpl
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,9 +38,11 @@ import nextstep.shoppingcart.util.CartUtil
 fun ProductListScreen(
     modifier: Modifier = Modifier,
     productList: List<Product> = emptyList(),
-    cartUtil: CartUtil = CartUtil,
+    cartRepository: CartRepository = CartRepositoryImpl.getInstance(),
     onRoute: (RouteType) -> Unit = {}
 ) {
+    val items = cartRepository.items.collectAsState().value
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -77,10 +81,10 @@ fun ProductListScreen(
             ) { item ->
                 ProductItem(
                     item = item,
-                    count = cartUtil.items.find { it.product.id == item.id }?.count ?: 0,
+                    count = items.find { it.product.id == item.id }?.count ?: 0,
                     onClick = { onRoute(RouteType.ToDetail(item)) },
-                    onAdd = cartUtil::addOne,
-                    onRemove = cartUtil::removeOne
+                    onAdd = cartRepository::addOne,
+                    onRemove = cartRepository::removeOne
                 )
             }
         }

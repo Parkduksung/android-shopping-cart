@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,14 +19,18 @@ import androidx.compose.ui.unit.sp
 import nextstep.shoppingcart.R
 import nextstep.shoppingcart.designsystem.theme.ShoppingCartTheme
 import nextstep.shoppingcart.designsystem.theme.TopBarTextColor
-import nextstep.shoppingcart.util.CartUtil
+import nextstep.shoppingcart.util.CartRepository
+import nextstep.shoppingcart.util.CartRepositoryImpl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
     modifier: Modifier = Modifier,
+    cartRepository: CartRepository = CartRepositoryImpl.getInstance(),
     onBack: () -> Unit = {}
 ) {
+    val items = cartRepository.items.collectAsState().value
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -49,18 +54,18 @@ fun CartScreen(
         modifier = modifier.fillMaxSize()
     ) { contentPadding ->
         CartListScreen(
-            items = CartUtil.items,
+            items = items,
             modifier = Modifier
                 .padding(contentPadding)
                 .fillMaxSize(),
             onDelete = { item ->
-                CartUtil.removeAll(item.product)
+                cartRepository.removeAll(item.product)
             },
             onAdd = { item ->
-                CartUtil.addOne(item.product)
+                cartRepository.addOne(item.product)
             },
             onRemove = { item ->
-                CartUtil.removeOne(item.product)
+                cartRepository.removeOne(item.product)
             }
         )
     }
